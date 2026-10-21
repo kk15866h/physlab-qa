@@ -78,7 +78,8 @@ def linear_fit(x, y, *, sigma_y=None) -> LinearFitResult:
     rss = float(np.dot(residuals, residuals))
     dof = len(x_arr) - 2
     total_ss = float(np.dot(y_arr - np.mean(y_arr), y_arr - np.mean(y_arr)))
-    r_squared = 1.0 if total_ss == 0 and rss == 0 else (float("nan") if total_ss == 0 else 1 - rss / total_ss)
+    # R² has a zero denominator for constant response data, so it is undefined.
+    r_squared = float("nan") if total_ss == 0 else 1 - rss / total_ss
     rmse = math.sqrt(rss / len(x_arr))
     chi_square = reduced_chi_square = None
     if weighted:
