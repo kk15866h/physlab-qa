@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
+from physlab_qa import __version__
 from physlab_qa.csvio import read_numeric_columns, validate_csv
 from physlab_qa.fit import LinearFitResult, linear_fit
 from physlab_qa.report import write_fit_report
@@ -25,7 +26,7 @@ def _parser() -> argparse.ArgumentParser:
         prog="physlab-qa",
         description="Validate experimental CSV data and generate reproducible linear-fit reports.",
     )
-    parser.add_argument("--version", action="version", version="physlab-qa 0.1.0")
+    parser.add_argument("--version", action="version", version=f"physlab-qa {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
 
     validate = commands.add_parser("validate", help="audit a CSV without modifying it")
