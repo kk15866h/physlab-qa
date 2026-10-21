@@ -36,3 +36,5 @@ jobs:
           test -s build/ci-report.md
           python examples/analyze_pendulum.py
           test -s build/pendulum-report.md
+          python examples/analyze_damped_pendulum.py
+          test -s build/damped-pendulum-report.md

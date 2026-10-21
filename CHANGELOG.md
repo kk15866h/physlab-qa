@@ -4,6 +4,14 @@ All notable changes to PhysLab QA are documented here. The project follows seman
 
 ## [Unreleased]
 
+### Added
+
+- A provenance-documented real-data damped-pendulum case study using a licensed raw sensor export, with reproducible peak-envelope analysis and independent closed-form OLS verification.
+
+### Fixed
+
+- CLI JSON output represents undefined or non-finite diagnostics as `null`, avoiding non-standard `NaN` and `Infinity` tokens.
+
 ### Planned
 
 - Nonlinear fitting with explicit model definitions.

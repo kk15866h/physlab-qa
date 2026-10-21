@@ -14,7 +14,8 @@ PhysLab QA is an early-stage Python toolkit for validating experimental tables, 
 - Ordinary and weighted least-squares linear regression with fit diagnostics.
 - First-order uncertainty propagation for independent input quantities.
 - Markdown reports and optional residual plots.
-- Human-readable CLI output plus machine-readable JSON for automation.
+- Human-readable CLI output plus standards-compliant machine-readable JSON for automation.
+- A reproducible real-data case study using a licensed raw pendulum sensor export.
 - Python API, regression tests, distribution checks, and CI on Python 3.10–3.13.
 
 ## Installation from source
@@ -59,6 +60,18 @@ python examples/analyze_pendulum.py
 
 It fits the linearized simple-pendulum model $T^2 = (4\\pi^2/g)L + b$, estimates $g$, propagates the fitted slope's standard error, and writes a Markdown report. The supplied data are synthetic, so the result is only a software demonstration and must not be cited as an experimental measurement. The propagated uncertainty excludes timing and length uncertainties, correlations, and systematic effects. See [examples/README.md](examples/README.md) for provenance and interpretation details.
 
+## Real-data case study
+
+The repository also includes a raw sensor-export CSV from the [Damped Pendulum Dataset](https://github.com/EnzeXu/Damped_Pendulum_Dataset). The source measurements are stored under `examples/data/raw_data/`; the analysis reads the file without rewriting the stored measurements. The external data are licensed under Apache-2.0, separately from this repository's MIT-licensed code; see [data provenance and license](examples/data/README.md).
+
+Run the case study from the repository root:
+
+```bash
+python examples/analyze_damped_pendulum.py
+```
+
+The script selects local extrema of absolute angular displacement, fits the logarithm of the peak envelope, and estimates an exponential amplitude-decay rate. It does not fit a full nonlinear damped-pendulum equation. The reported slope uncertainty is the ordinary least-squares statistical standard error and excludes sensor calibration, peak-picking, timing, and systematic effects.
+
 ## Validation approach
 
 PhysLab QA does not rely only on self-consistency tests. The test suite includes independent closed-form reference calculations for ordinary and weighted least squares, analytical-derivative checks for uncertainty propagation, CSV edge cases, CLI behavior, fit invariance properties, and the synthetic pendulum cross-check.
@@ -91,7 +104,7 @@ CI runs the tests on Python 3.10–3.13, builds both a source distribution and w
 - [x] First-order uncertainty propagation
 - [x] Synthetic physics case study and end-to-end CI check
 - [x] Independent closed-form numerical cross-checks
-- [ ] Add a provenance-reviewed real laboratory dataset and reproducible analysis
+- [x] Add a provenance-documented real laboratory dataset and reproducible analysis
 - [ ] Nonlinear fitting with explicit model definitions
 - [ ] Additional diagnostics for influential observations and residual structure
 

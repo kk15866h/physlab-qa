@@ -32,8 +32,14 @@ The validation suite deliberately includes calculations that do not call the pro
 
 These reference tests are intended to catch implementation errors that self-consistency tests could miss. They use deterministic, well-conditioned datasets and tight numerical tolerances. Passing them does not establish correctness for every experiment or every ill-conditioned dataset.
 
+## Real-data damped-pendulum case study
+
+The reproducible case study reads a publicly attributed raw sensor-export CSV and uses only its time and angle columns. It preserves the source file, selects local extrema of absolute angle after 5 s with amplitude above 0.05 rad, groups adjacent same-sign candidates, and fits the logarithm of the selected peak amplitudes against time. Under an exponential-envelope approximation, the negative fitted slope estimates the amplitude-decay rate.
+
+The fit is cross-checked in tests against independent scalar closed-form ordinary least-squares formulas for the slope, slope standard error, and R². This verifies the regression implementation for the selected peak series; it does not independently verify the sensor acquisition, peak-detection assumptions, or the physical adequacy of an exponential envelope. The report therefore separates the statistical standard error from unquantified calibration, timing, peak-selection, correlation, and systematic effects. The external CSV is licensed separately under Apache-2.0; its source and license are documented in `examples/data/README.md`.
+
 ## Validation strategy
 
-Tests cover exact and noisy linear data, weighted-fit diagnostics, fit invariance properties, undefined R², uncertainty propagation, CSV edge cases, machine-readable CLI output, a synthetic pendulum case study, and independent closed-form cross-checks. CI runs on Python 3.10–3.13 and also validates the built wheel and source distribution.
+Tests cover exact and noisy linear data, weighted-fit diagnostics, fit invariance properties, undefined R², uncertainty propagation, CSV edge cases, machine-readable CLI output, synthetic and real-data pendulum case studies, and independent closed-form cross-checks. CI runs on Python 3.10–3.13 and also validates the built wheel and source distribution.
 
 These checks are a starting point, not broad scientific validation. Before research use, compare results with hand calculations or an independent implementation and include uncertainties not covered by this software.
