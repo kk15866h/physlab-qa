@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import sys
 from pathlib import Path
@@ -19,6 +20,17 @@ def _comma_list(value: str | None) -> list[str]:
     if not value:
         return []
     return [part.strip() for part in value.split(",") if part.strip()]
+
+
+def _json_safe(value: object) -> object:
+    """Convert non-finite floats to null-compatible values recursively."""
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -80,7 +92,7 @@ def _run_validate(args: argparse.Namespace) -> int:
         delimiter=args.delimiter,
     )
     if args.json:
-        print(json.dumps(report.to_dict(), ensure_ascii=False, indent=2))
+        print(json.dumps(_json_safe(report.to_dict()), ensure_ascii=False, indent=2, allow_nan=False))
     else:
         print(f"{'PASS' if report.ok else 'FAIL'}: {report.path}")
         print(f"Rows: {report.rows}; columns: {', '.join(report.columns)}")
@@ -118,7 +130,7 @@ def _run_fit(args: argparse.Namespace) -> int:
         payload["x_column"] = args.x
         payload["y_column"] = args.y
         payload["report_path"] = args.output
-        print(json.dumps(payload, allow_nan=True, indent=2))
+        print(json.dumps(_json_safe(payload), allow_nan=False, indent=2))
     else:
         print(f"Slope: {result.slope:.8g} +/- {result.slope_stderr:.3g}")
         print(f"Intercept: {result.intercept:.8g} +/- {result.intercept_stderr:.3g}")
