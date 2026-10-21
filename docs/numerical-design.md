@@ -12,7 +12,9 @@ For constant response data, R² is undefined because its denominator is zero. Th
 
 ## Residual and influence diagnostics
 
-Linear-fit results include the diagonal leverage values, internally standardized residuals, Cook's distance, and a Durbin–Watson statistic for ordinary least squares. Leverage is the diagonal of the hat matrix for the fitted design; for weighted fits it is computed from the sigma-scaled design. Weighted standardized residuals use the supplied sigma_y values as known absolute standard uncertainties and adjust for leverage. Cook's distance uses the corresponding standardized residual and leverage.
+Linear-fit results include the diagonal leverage values, internally standardized residuals, Cook's distance, and a Durbin–Watson statistic for ordinary least squares. For the two-parameter model, the leverage of observation i is the diagonal element of the hat matrix, hᵢ = xᵢᵀ(XᵀX)⁻¹xᵢ. For weighted fits, compute the same quantity from the sigma-scaled design Xᵢ/σᵢ.
+
+For ordinary least squares, the internally standardized residual is rᵢ = eᵢ/[s√(1−hᵢ)], where s² = RSS/(n−p) and p = 2. For weighted least squares with known absolute standard uncertainties, the standardized residual is rᵢ = (eᵢ/σᵢ)/√(1−hᵢ); it is not rescaled by reduced chi-square. Cook's distance is Dᵢ = (rᵢ²/p)·hᵢ/(1−hᵢ). The Durbin–Watson statistic is DW = Σᵢ₌₂ⁿ(eᵢ−eᵢ₋₁)² / Σᵢ₌₁ⁿeᵢ² for ordinary least squares.
 
 Durbin–Watson is omitted for weighted fits and is order-sensitive even for ordinary least squares; interpret it only when input row order represents a meaningful sequence. Standardized residuals and Cook's distance are undefined when the residual variance or leverage denominator makes them mathematically unavailable.
 

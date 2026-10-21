@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import pytest
 
@@ -50,6 +52,25 @@ def test_influence_diagnostics_identify_a_synthetic_outlier():
     result = linear_fit(x, y)
 
     assert sum(result.leverage) == pytest.approx(2.0, abs=1e-12)
+    design = np.column_stack((np.ones_like(x), x))
+    reference_leverage = np.einsum(
+        "ij,jk,ik->i", design, np.linalg.inv(design.T @ design), design
+    )
+    residuals = np.asarray(result.residuals)
+    residual_scale = math.sqrt(result.residual_sum_squares / (len(x) - 2))
+    reference_standardized = residuals / (
+        residual_scale * np.sqrt(1.0 - reference_leverage)
+    )
+    reference_cooks = (
+        reference_standardized**2
+        * reference_leverage
+        / (2.0 * (1.0 - reference_leverage))
+    )
+    np.testing.assert_allclose(result.leverage, reference_leverage, rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(
+        result.standardized_residuals, reference_standardized, rtol=1e-12, atol=1e-12
+    )
+    np.testing.assert_allclose(result.cooks_distance, reference_cooks, rtol=1e-12, atol=1e-12)
     assert len(result.standardized_residuals) == len(x)
     assert len(result.cooks_distance) == len(x)
     assert result.durbin_watson is not None
@@ -68,6 +89,27 @@ def test_weighted_influence_diagnostics_use_known_sigma_and_omit_durbin_watson()
 
     assert result.weighted
     assert sum(result.leverage) == pytest.approx(2.0, abs=1e-12)
+    design = np.column_stack((np.ones_like(x), x))
+    weighted_design = design / sigma[:, None]
+    reference_leverage = np.einsum(
+        "ij,jk,ik->i",
+        weighted_design,
+        np.linalg.inv(weighted_design.T @ weighted_design),
+        weighted_design,
+    )
+    reference_standardized = np.asarray(result.residuals) / (
+        sigma * np.sqrt(1.0 - reference_leverage)
+    )
+    reference_cooks = (
+        reference_standardized**2
+        * reference_leverage
+        / (2.0 * (1.0 - reference_leverage))
+    )
+    np.testing.assert_allclose(result.leverage, reference_leverage, rtol=1e-12, atol=1e-12)
+    np.testing.assert_allclose(
+        result.standardized_residuals, reference_standardized, rtol=1e-12, atol=1e-12
+    )
+    np.testing.assert_allclose(result.cooks_distance, reference_cooks, rtol=1e-12, atol=1e-12)
     assert result.durbin_watson is None
     assert all(np.isfinite(value) for value in result.standardized_residuals)
     assert all(np.isfinite(value) for value in result.cooks_distance)
