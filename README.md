@@ -49,13 +49,15 @@ For machine-readable output:
 physlab-qa fit examples/pendulum.csv --x length_m --y period_squared_s2 --output build/report.md --json
 ```
 
+Undefined or non-finite statistics are represented as JSON `null`, rather than non-standard `NaN` or `Infinity` tokens.
+
 To see a physics-focused end-to-end example, run:
 
 ```bash
 python examples/analyze_pendulum.py
 ```
 
-It fits the linearized simple-pendulum model $T^2 = (4\pi^2/g)L + b$, estimates $g$, propagates the fitted slope's standard error, and writes a Markdown report. The supplied data are synthetic, so the result is only a software demonstration and must not be cited as an experimental measurement. The propagated uncertainty excludes timing and length uncertainties, correlations, and systematic effects. See [examples/README.md](examples/README.md) for provenance and interpretation details.
+It fits the linearized simple-pendulum model $T^2 = (4\\pi^2/g)L + b$, estimates $g$, propagates the fitted slope's standard error, and writes a Markdown report. The supplied data are synthetic, so the result is only a software demonstration and must not be cited as an experimental measurement. The propagated uncertainty excludes timing and length uncertainties, correlations, and systematic effects. See [examples/README.md](examples/README.md) for provenance and interpretation details.
 
 ## Validation approach
 
