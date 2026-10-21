@@ -2,11 +2,13 @@
 
 ## Linear least squares
 
-The fitted model is y = a + bx. The implementation solves the least-squares system with NumPy's SVD-backed least-squares routine rather than explicitly inverting the normal equations to estimate the parameters.
+The fitted model is y = a + bx. Parameters are obtained with NumPy's SVD-backed least-squares solver. The coefficient covariance is calculated from the singular-value decomposition of the design matrix rather than explicitly inverting the normal matrix.
 
-For ordinary least squares, the residual variance estimate is RSS/(n-2) when there are positive residual degrees of freedom. The coefficient covariance estimate is this variance multiplied by (XᵀX)⁻¹. With exactly two observations, the model has no residual degrees of freedom and standard errors are undefined.
+For ordinary least squares, the residual variance estimate is RSS/(n-2) when there are positive residual degrees of freedom. The coefficient covariance estimate is this variance multiplied by (XᵀX)⁻¹. With exactly two observations, the model has no residual degrees of freedom and ordinary-fit standard errors are undefined.
 
-For weighted least squares, the supplied sigma_y values are treated as known, independent, absolute standard uncertainties. The weighted design and response are divided by sigma_y, and the covariance matrix is (XᵀWX)⁻¹ without scaling by reduced chi-square. Users must not interpret the resulting diagnostics as proof that the physical model is valid.
+For weighted least squares, the supplied sigma_y values are treated as known, independent, absolute standard uncertainties. The design and response are divided by sigma_y; the covariance is (XᵀWX)⁻¹ without rescaling by reduced chi-square. Weighted R² uses weighted residual and total sums of squares. The reported RMSE and residual sum of squares remain unweighted summaries, so they are comparable in the original y units. Users must not interpret these diagnostics as proof that the physical model is valid.
+
+For constant response data, R² is undefined because its denominator is zero. The API returns NaN; reports display this as "undefined".
 
 ## First-order uncertainty propagation
 
@@ -22,4 +24,4 @@ Validation reports missing cells, malformed numeric values in selected columns, 
 
 ## Validation strategy
 
-Tests cover exact linear data, weighted-fit diagnostics, invalid inputs, uncertainty propagation, and CSV parsing. These tests are a starting point, not broad scientific validation. Additional tests should compare against hand-calculated examples and independent implementations before research use.
+Tests cover exact and noisy linear data, weighted-fit diagnostics, fit invariance properties, undefined R², uncertainty propagation, CSV edge cases, and a synthetic pendulum case study. These tests are a starting point, not broad scientific validation. Before research use, compare results with hand calculations or an independent implementation and include uncertainties not covered by this software.
