@@ -9,8 +9,15 @@ description = "Reproducible, uncertainty-aware analysis for experimental CSV dat
 readme = "README.md"
 requires-python = ">=3.10"
 license = {file = "LICENSE"}
-authors = [{name = "kk15866h"}]
-keywords = ["scientific-computing", "physics-lab", "data-validation", "uncertainty", "regression", "reproducibility"]
+authors = [{name = "PhysLab QA contributors"}]
+keywords = [
+  "scientific-computing",
+  "physics-lab",
+  "data-validation",
+  "uncertainty",
+  "regression",
+  "reproducibility",
+]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
@@ -27,17 +34,23 @@ dependencies = ["numpy>=1.24"]
 
 [project.optional-dependencies]
 plot = ["matplotlib>=3.7"]
-dev = ["pytest>=8.0", "build>=1.2", "ruff>=0.6"]
+dev = ["pytest>=8.0", "build>=1.2", "ruff>=0.6", "twine>=5.1"]
 
 [project.scripts]
 physlab-qa = "physlab_qa.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/kk15866h/physlab-qa"
+Source = "https://github.com/kk15866h/physlab-qa"
 Issues = "https://github.com/kk15866h/physlab-qa/issues"
+Changelog = "https://github.com/kk15866h/physlab-qa/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/kk15866h/physlab-qa/tree/main/docs"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+physlab_qa = ["py.typed"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
