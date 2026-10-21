@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use PhysLab QA in teaching, analysis, or research, please cite the software and the exact version or commit used."
+title: "PhysLab QA"
+type: software
+authors:
+  - name: "PhysLab QA contributors"
+version: 0.1.0
+repository-code: "https://github.com/kk15866h/physlab-qa"
+license: MIT
+keywords:
+  - physics laboratory
+  - uncertainty
+  - regression
+  - reproducible analysis
+  - scientific computing
