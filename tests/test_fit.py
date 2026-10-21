@@ -81,3 +81,15 @@ def test_exact_line_has_undefined_standardized_residuals_and_durbin_watson():
     assert all(np.isnan(value) for value in result.cooks_distance)
     assert np.isnan(result.durbin_watson)
     assert result.potentially_influential_rows == ()
+
+
+def test_residual_diagnostics_handle_small_residuals_on_a_large_baseline():
+    x = np.arange(8, dtype=float)
+    perturbations = np.array([0, 1, -1, 0, 1, -1, 0, 1], dtype=float)
+    y = 1e12 + 2.0 * x + perturbations
+
+    result = linear_fit(x, y)
+
+    assert result.residual_sum_squares > 0
+    assert np.isfinite(result.durbin_watson)
+    assert all(np.isfinite(value) for value in result.standardized_residuals)

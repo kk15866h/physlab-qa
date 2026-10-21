@@ -108,9 +108,8 @@ def _residual_diagnostics(
     leverage = np.clip(leverage, 0.0, 1.0)
 
     standardized = np.full(observation_count, np.nan, dtype=float)
-    residual_tolerance = (
-        np.finfo(float).eps * max(1.0, float(np.dot(response, response))) * observation_count
-    )
+    response_scale = max(1.0, float(np.linalg.norm(response)))
+    residual_tolerance = 100.0 * (np.finfo(float).eps * response_scale) ** 2
     remaining_leverage = np.maximum(1.0 - leverage, 0.0)
     if sigma_y is None:
         if dof > 0 and rss > residual_tolerance:
