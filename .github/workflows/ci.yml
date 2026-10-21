@@ -27,3 +27,5 @@ jobs:
           physlab-qa validate examples/pendulum.csv --numeric-cols length_m,period_squared_s2
           physlab-qa fit examples/pendulum.csv --x length_m --y period_squared_s2 --output build/ci-report.md
           test -s build/ci-report.md
+          python examples/analyze_pendulum.py
+          test -s build/pendulum-report.md
