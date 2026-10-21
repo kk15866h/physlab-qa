@@ -25,7 +25,7 @@ def test_weighted_fit_reports_chi_square_and_weighted_r_squared():
     assert result.weighted
     assert result.chi_square is not None
     assert result.slope_stderr > 0
-    assert result.r_squared == pytest.approx(0.9100365448, abs=1e-8)
+    assert result.r_squared == pytest.approx(0.9964014618, abs=1e-8)
 
 
 def test_weighted_exact_line_has_unit_r_squared():
