@@ -1,7 +1,5 @@
 import json
 
-import pytest
-
 from physlab_qa.cli import main
 
 
