@@ -16,11 +16,21 @@ def test_constant_response_has_undefined_r_squared():
     assert np.isnan(result.r_squared)
 
 
-def test_weighted_fit_reports_chi_square():
-    result = linear_fit([0, 1, 2, 3], [1.1, 2.9, 5.2, 6.8], sigma_y=[0.2] * 4)
+def test_weighted_fit_reports_chi_square_and_weighted_r_squared():
+    result = linear_fit(
+        [0, 1, 2, 3],
+        [1.1, 2.9, 5.2, 6.8],
+        sigma_y=[0.2, 0.2, 0.5, 0.5],
+    )
     assert result.weighted
     assert result.chi_square is not None
     assert result.slope_stderr > 0
+    assert result.r_squared == pytest.approx(0.9100365448, abs=1e-8)
+
+
+def test_weighted_exact_line_has_unit_r_squared():
+    result = linear_fit([0, 1, 2, 3], [1, 3, 5, 7], sigma_y=[0.1, 0.2, 0.3, 0.4])
+    assert result.r_squared == pytest.approx(1.0, abs=1e-12)
 
 
 def test_invalid_inputs_rejected():
