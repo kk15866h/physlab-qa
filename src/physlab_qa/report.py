@@ -67,6 +67,60 @@ def write_fit_report(
                 ),
             ]
         )
+
+    if result.leverage:
+        finite_standardized = [
+            abs(value) for value in result.standardized_residuals if math.isfinite(value)
+        ]
+        finite_cooks = [value for value in result.cooks_distance if math.isfinite(value)]
+        max_standardized = max(finite_standardized) if finite_standardized else float("nan")
+        max_cook = max(finite_cooks) if finite_cooks else float("nan")
+        flagged_rows = result.potentially_influential_rows
+        lines.extend(
+            [
+                "",
+                "## Residual and influence diagnostics",
+                "",
+                f"- Maximum absolute standardized residual: {_fmt(max_standardized)}",
+                f"- Maximum Cook's distance: {_fmt(max_cook)}",
+                (
+                    f"- Durbin–Watson statistic: {_fmt(result.durbin_watson)}"
+                    if result.durbin_watson is not None
+                    else "- Durbin–Watson statistic: not computed for weighted least squares"
+                ),
+                (
+                    "- Potentially influential observation indices (1-based): "
+                    + (", ".join(map(str, flagged_rows)) if flagged_rows else "none")
+                ),
+                "- Screening heuristics: absolute standardized residual > 3, leverage > 2p/n, "
+                "or Cook's distance > 4/n. These are review flags, not automatic outlier removal.",
+                "- Durbin–Watson is order-sensitive; interpret it only when input row order "
+                "represents a meaningful sequence.",
+            ]
+        )
+        top_cooks = sorted(
+            (
+                (index, value)
+                for index, value in enumerate(result.cooks_distance, start=1)
+                if math.isfinite(value)
+            ),
+            key=lambda item: item[1],
+            reverse=True,
+        )[:10]
+        if top_cooks and top_cooks[0][1] > 0:
+            lines.extend(
+                [
+                    "",
+                    "| Observation index | Leverage | Standardized residual | Cook's distance |",
+                    "|---:|---:|---:|---:|",
+                ]
+            )
+            for index, cook in top_cooks:
+                lines.append(
+                    f"| {index} | {_fmt(result.leverage[index - 1])} | "
+                    f"{_fmt(result.standardized_residuals[index - 1])} | {_fmt(cook)} |"
+                )
+
     if plot_path:
         lines.extend(["", "## Plot", "", f"![Fit plot]({plot_path})"])
     lines.extend(

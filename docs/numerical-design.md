@@ -10,6 +10,14 @@ For weighted least squares, the supplied sigma_y values are treated as known, in
 
 For constant response data, R² is undefined because its denominator is zero. The API returns NaN; reports display this as "undefined".
 
+## Residual and influence diagnostics
+
+Linear-fit results include the diagonal leverage values, internally standardized residuals, Cook's distance, and a Durbin–Watson statistic for ordinary least squares. Leverage is the diagonal of the hat matrix for the fitted design; for weighted fits it is computed from the sigma-scaled design. Weighted standardized residuals use the supplied sigma_y values as known absolute standard uncertainties and adjust for leverage. Cook's distance uses the corresponding standardized residual and leverage.
+
+Durbin–Watson is omitted for weighted fits and is order-sensitive even for ordinary least squares; interpret it only when input row order represents a meaningful sequence. Standardized residuals and Cook's distance are undefined when the residual variance or leverage denominator makes them mathematically unavailable.
+
+The report and JSON output flag observations using conventional screening heuristics: absolute standardized residual > 3, leverage > 2p/n, or Cook's distance > 4/n. These thresholds are not universal significance tests and do not establish that a measurement is wrong. Flags are prompts for review only; PhysLab QA never deletes, alters, or automatically downweights observations.
+
 ## First-order uncertainty propagation
 
 For independent input quantities xᵢ with standard uncertainties uᵢ, the first-order estimate is
@@ -48,6 +56,6 @@ The fit is cross-checked in tests against independent scalar closed-form ordinar
 
 ## Validation strategy
 
-Tests cover exact and noisy linear data, weighted-fit diagnostics, fit invariance properties, undefined R², uncertainty propagation, CSV edge cases, machine-readable CLI output, synthetic and real-data pendulum case studies, nonlinear-fit reference checks, and independent closed-form cross-checks. CI runs on Python 3.10–3.13 and also validates the built wheel and source distribution.
+Tests cover exact and noisy linear data, weighted-fit diagnostics, influence diagnostics, fit invariance properties, undefined R², uncertainty propagation, CSV edge cases, machine-readable CLI output, synthetic and real-data pendulum case studies, nonlinear-fit reference checks, and independent closed-form cross-checks. CI runs on Python 3.10–3.13 and also validates the built wheel and source distribution.
 
 These checks are a starting point, not broad scientific validation. Before research use, compare results with hand calculations or an independent implementation and include uncertainties not covered by this software.

@@ -40,3 +40,44 @@ def test_invalid_inputs_rejected():
         linear_fit([1, 2], [2, float("nan")])
     with pytest.raises(ValueError):
         linear_fit([1, 2], [2, 3], sigma_y=[0, 1])
+
+
+def test_influence_diagnostics_identify_a_synthetic_outlier():
+    x = np.arange(10, dtype=float)
+    y = 1.0 + 2.0 * x
+    y[5] += 10.0
+
+    result = linear_fit(x, y)
+
+    assert sum(result.leverage) == pytest.approx(2.0, abs=1e-12)
+    assert len(result.standardized_residuals) == len(x)
+    assert len(result.cooks_distance) == len(x)
+    assert result.durbin_watson is not None
+    assert 0.0 <= result.durbin_watson <= 4.0
+    assert int(np.argmax(result.cooks_distance)) == 5
+    assert 6 in result.potentially_influential_rows
+    assert result.potentially_influential_rows == (6,)
+
+
+def test_weighted_influence_diagnostics_use_known_sigma_and_omit_durbin_watson():
+    x = np.arange(8, dtype=float)
+    y = 0.5 + 1.25 * x + np.array([0.01, -0.02, 0.015, -0.01, 0.02, -0.015, 0.005, -0.005])
+    sigma = np.linspace(0.02, 0.05, len(x))
+
+    result = linear_fit(x, y, sigma_y=sigma)
+
+    assert result.weighted
+    assert sum(result.leverage) == pytest.approx(2.0, abs=1e-12)
+    assert result.durbin_watson is None
+    assert all(np.isfinite(value) for value in result.standardized_residuals)
+    assert all(np.isfinite(value) for value in result.cooks_distance)
+
+
+def test_exact_line_has_undefined_standardized_residuals_and_durbin_watson():
+    result = linear_fit([0, 1, 2, 3], [1, 3, 5, 7])
+
+    assert sum(result.leverage) == pytest.approx(2.0, abs=1e-12)
+    assert all(np.isnan(value) for value in result.standardized_residuals)
+    assert all(np.isnan(value) for value in result.cooks_distance)
+    assert np.isnan(result.durbin_watson)
+    assert result.potentially_influential_rows == ()

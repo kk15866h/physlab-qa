@@ -36,6 +36,8 @@ def test_fit_cli_writes_report_and_json(tmp_path, capsys):
     text = report.read_text(encoding="utf-8")
     assert "ordinary least squares" in text
     assert "R²" in text
+    assert "Residual and influence diagnostics" in text
+    assert "Cook's distance" in text
 
 
 def test_fit_cli_returns_nonzero_for_bad_column(tmp_path, capsys):

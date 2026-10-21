@@ -6,6 +6,7 @@ All notable changes to PhysLab QA are documented here. The project follows seman
 
 ### Added
 
+- Per-observation leverage, standardized residuals, Cook's distance, and order-aware Durbin–Watson diagnostics for linear fits, with heuristic review flags and no automatic outlier deletion.
 - Optional SciPy-based nonlinear least-squares fitting with explicit model functions, covariance estimates, and convergence diagnostics.
 - A deterministic synthetic exponential-decay example with known parameters and an independent quadratic-fit reference check.
 - A provenance-documented real-data damped-pendulum case study using a licensed raw sensor export, with reproducible peak-envelope analysis and independent closed-form OLS verification.

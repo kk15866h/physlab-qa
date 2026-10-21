@@ -11,7 +11,7 @@ PhysLab QA is an early-stage Python toolkit for validating experimental tables, 
 ## Features
 
 - CSV quality checks for missing values, malformed rows, non-numeric cells, and duplicate records.
-- Ordinary and weighted least-squares linear regression with fit diagnostics.
+- Ordinary and weighted least-squares linear regression with residual and influence diagnostics.
 - Optional SciPy-based nonlinear fitting with explicit models, parameter covariance, and convergence diagnostics.
 - First-order uncertainty propagation for independent input quantities.
 - Markdown reports and optional residual plots.
@@ -97,6 +97,7 @@ CI runs the tests on Python 3.10–3.13, builds both a source distribution and w
 - Uncertainty in x, correlated errors, and model discrepancy are not currently handled.
 - First-order uncertainty propagation assumes independent inputs and may be inaccurate for strongly nonlinear functions.
 - High R² alone does not establish that a model is physically appropriate.
+- Influence thresholds are screening heuristics, not proof that an observation is erroneous; no outliers are automatically removed.
 - Nonlinear parameter standard errors are local covariance approximations and can be unreliable for strongly nonlinear or weakly identifiable models.
 
 ## Project documentation
@@ -118,7 +119,7 @@ CI runs the tests on Python 3.10–3.13, builds both a source distribution and w
 - [x] Independent closed-form numerical cross-checks
 - [x] Add a provenance-documented real laboratory dataset and reproducible analysis
 - [x] Nonlinear fitting with explicit model definitions
-- [ ] Additional diagnostics for influential observations and residual structure
+- [x] Additional diagnostics for influential observations and residual structure
 
 Current work is tracked in [GitHub Issues](https://github.com/kk15866h/physlab-qa/issues).
 
