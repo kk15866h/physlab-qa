@@ -1,11 +1,13 @@
 import math
+import runpy
+from pathlib import Path
 
 import pytest
 
-from examples.analyze_damped_pendulum import (
-    _extract_peak_envelope,
-    analyze_damped_pendulum,
-)
+SCRIPT_PATH = Path(__file__).resolve().parents[1] / "examples" / "analyze_damped_pendulum.py"
+_SCRIPT = runpy.run_path(str(SCRIPT_PATH))
+_extract_peak_envelope = _SCRIPT["_extract_peak_envelope"]
+analyze_damped_pendulum = _SCRIPT["analyze_damped_pendulum"]
 
 
 def test_peak_extractor_rejects_non_monotonic_time():
