@@ -101,12 +101,18 @@ def linear_fit(x, y, *, sigma_y=None) -> LinearFitResult:
     chi_square = reduced_chi_square = None
 
     if weighted:
-        normalized_weights = (float(np.min(sigma_arr)) / sigma_arr) ** 2
+        scale = float(np.min(sigma_arr))
+        normalized_weights = (scale / sigma_arr) ** 2
         weighted_mean = float(np.average(y_arr, weights=normalized_weights))
         weighted_total_ss = float(np.sum(normalized_weights * (y_arr - weighted_mean) ** 2))
+        normalized_residual_ss = float(np.sum((residuals * (scale / sigma_arr)) ** 2))
         chi_square = float(np.sum((residuals / sigma_arr) ** 2))
         reduced_chi_square = chi_square / dof if dof > 0 else None
-        r_squared = float("nan") if weighted_total_ss == 0 else 1.0 - chi_square / weighted_total_ss
+        r_squared = (
+            float("nan")
+            if weighted_total_ss == 0
+            else 1.0 - normalized_residual_ss / weighted_total_ss
+        )
         intercept_stderr = math.sqrt(max(0.0, float(covariance[0, 0])))
         slope_stderr = math.sqrt(max(0.0, float(covariance[1, 1])))
     else:
