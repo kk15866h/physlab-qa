@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install --upgrade pip
-      - run: python -m pip install -e ".[dev]"
+      - run: python -m pip install -e ".[dev,nonlinear]"
       - name: Static correctness checks
         run: ruff check --select F src tests examples
       - name: Run unit tests
@@ -38,3 +38,5 @@ jobs:
           test -s build/pendulum-report.md
           python examples/analyze_damped_pendulum.py
           test -s build/damped-pendulum-report.md
+          python examples/analyze_exponential_decay.py
+          test -s build/exponential-decay-report.md

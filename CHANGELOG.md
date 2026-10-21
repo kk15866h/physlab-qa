@@ -6,6 +6,8 @@ All notable changes to PhysLab QA are documented here. The project follows seman
 
 ### Added
 
+- Optional SciPy-based nonlinear least-squares fitting with explicit model functions, covariance estimates, and convergence diagnostics.
+- A deterministic synthetic exponential-decay example with known parameters and an independent quadratic-fit reference check.
 - A provenance-documented real-data damped-pendulum case study using a licensed raw sensor export, with reproducible peak-envelope analysis and independent closed-form OLS verification.
 
 ### Fixed
@@ -14,7 +16,6 @@ All notable changes to PhysLab QA are documented here. The project follows seman
 
 ### Planned
 
-- Nonlinear fitting with explicit model definitions.
 - Diagnostics for influential observations and residual structure.
 - Validation against additional independent datasets and implementations.
 - A documented public release workflow.
@@ -42,7 +43,7 @@ All notable changes to PhysLab QA are documented here. The project follows seman
 ### Limitations
 
 - The package is alpha software and has not undergone broad external scientific validation.
-- Uncertainty in x, correlated uncertainties, model discrepancy, and nonlinear fitting are not yet supported.
+- Uncertainty in x, correlated uncertainties, and model discrepancy are not yet supported.
 - The included pendulum data are synthetic and are not experimental evidence.
 
 [Unreleased]: https://github.com/kk15866h/physlab-qa/compare/main...HEAD

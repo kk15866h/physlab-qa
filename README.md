@@ -12,6 +12,7 @@ PhysLab QA is an early-stage Python toolkit for validating experimental tables, 
 
 - CSV quality checks for missing values, malformed rows, non-numeric cells, and duplicate records.
 - Ordinary and weighted least-squares linear regression with fit diagnostics.
+- Optional SciPy-based nonlinear fitting with explicit models, parameter covariance, and convergence diagnostics.
 - First-order uncertainty propagation for independent input quantities.
 - Markdown reports and optional residual plots.
 - Human-readable CLI output plus standards-compliant machine-readable JSON for automation.
@@ -31,7 +32,7 @@ python -m pip install -e ".[plot]"
 For development and tests:
 
 ```bash
-python -m pip install -e ".[dev,plot]"
+python -m pip install -e ".[dev,plot,nonlinear]"
 pytest
 ```
 
@@ -60,6 +61,16 @@ python examples/analyze_pendulum.py
 
 It fits the linearized simple-pendulum model $T^2 = (4\\pi^2/g)L + b$, estimates $g$, propagates the fitted slope's standard error, and writes a Markdown report. The supplied data are synthetic, so the result is only a software demonstration and must not be cited as an experimental measurement. The propagated uncertainty excludes timing and length uncertainties, correlations, and systematic effects. See [examples/README.md](examples/README.md) for provenance and interpretation details.
 
+## Nonlinear fitting (optional SciPy extra)
+
+Install the optional dependency with `python -m pip install -e ".[nonlinear]"`. The CLI provides explicit `exponential-decay` and `quadratic` models; it never evaluates arbitrary expressions. For example:
+
+```bash
+physlab-qa fit-nonlinear data.csv --x time_s --y signal --model exponential-decay --p0 2,0.5,0 --output build/nonlinear-report.md --json
+```
+
+For `exponential-decay`, `--p0` values are ordered as amplitude, decay rate, and offset. For `quadratic`, they are ordered as quadratic, linear, and offset. The Python API also accepts a user-supplied vectorized model function and explicit initial parameters. Nonlinear fitting requires SciPy; convergence and local covariance estimates do not establish physical model validity.
+
 ## Real-data case study
 
 The repository also includes a raw sensor-export CSV from the [Damped Pendulum Dataset](https://github.com/EnzeXu/Damped_Pendulum_Dataset). The source measurements are stored under `examples/data/raw_data/`; the analysis reads the file without rewriting the stored measurements. The external data are licensed under Apache-2.0, separately from this repository's MIT-licensed code; see [data provenance and license](examples/data/README.md).
@@ -74,7 +85,7 @@ The script selects local extrema of absolute angular displacement, fits the loga
 
 ## Validation approach
 
-PhysLab QA does not rely only on self-consistency tests. The test suite includes independent closed-form reference calculations for ordinary and weighted least squares, analytical-derivative checks for uncertainty propagation, CSV edge cases, CLI behavior, fit invariance properties, and the synthetic pendulum cross-check.
+PhysLab QA does not rely only on self-consistency tests. The test suite includes independent closed-form reference calculations for ordinary and weighted least squares, analytical-derivative checks for uncertainty propagation, CSV edge cases, CLI behavior, fit invariance properties, nonlinear-fit cross-checks, and synthetic and real-data pendulum case studies.
 
 CI runs the tests on Python 3.10–3.13, builds both a source distribution and wheel, validates package metadata, installs the built wheel, checks dependencies, and exercises the installed CLI. See [docs/numerical-design.md](docs/numerical-design.md) for numerical assumptions and the validation strategy.
 
@@ -86,6 +97,7 @@ CI runs the tests on Python 3.10–3.13, builds both a source distribution and w
 - Uncertainty in x, correlated errors, and model discrepancy are not currently handled.
 - First-order uncertainty propagation assumes independent inputs and may be inaccurate for strongly nonlinear functions.
 - High R² alone does not establish that a model is physically appropriate.
+- Nonlinear parameter standard errors are local covariance approximations and can be unreliable for strongly nonlinear or weakly identifiable models.
 
 ## Project documentation
 
@@ -105,7 +117,7 @@ CI runs the tests on Python 3.10–3.13, builds both a source distribution and w
 - [x] Synthetic physics case study and end-to-end CI check
 - [x] Independent closed-form numerical cross-checks
 - [x] Add a provenance-documented real laboratory dataset and reproducible analysis
-- [ ] Nonlinear fitting with explicit model definitions
+- [x] Nonlinear fitting with explicit model definitions
 - [ ] Additional diagnostics for influential observations and residual structure
 
 Current work is tracked in [GitHub Issues](https://github.com/kk15866h/physlab-qa/issues).

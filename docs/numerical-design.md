@@ -32,6 +32,14 @@ The validation suite deliberately includes calculations that do not call the pro
 
 These reference tests are intended to catch implementation errors that self-consistency tests could miss. They use deterministic, well-conditioned datasets and tight numerical tolerances. Passing them does not establish correctness for every experiment or every ill-conditioned dataset.
 
+## Nonlinear least squares
+
+The optional nonlinear_fit API accepts a user-supplied vectorized model function, initial parameter values, optional parameter names, and optional sigma_y. Install SciPy with `python -m pip install "physlab-qa[nonlinear]"`. The CLI deliberately exposes a small explicit model registry (`exponential-decay` and `quadratic`) rather than evaluating user-provided expressions.
+
+The implementation uses SciPy's least-squares optimizer and requests its convergence status. A non-converged optimizer raises `NonlinearFitError`; a rank-deficient fitted model Jacobian is rejected because its parameters are not locally identifiable. The reported covariance is a local Jacobian-based approximation. For unweighted fits, SciPy scales covariance by the residual variance estimate; for weighted fits, sigma_y is treated as known, independent absolute standard uncertainty and covariance is not rescaled by reduced chi-square.
+
+Weighted R² uses weighted residual and total sums of squares; RMSE and residual sum of squares remain unweighted summaries in y units. The test suite compares a quadratic model against independent linear-algebra reference calculations, checks weighted covariance, fits deterministic exponential-decay data with known parameters, and exercises rank-deficiency and non-convergence failures. Optimizer convergence does not establish physical model validity, and local covariance estimates may be unreliable for strongly nonlinear or weakly identifiable models. No observations are automatically removed.
+
 ## Real-data damped-pendulum case study
 
 The reproducible case study reads a publicly attributed raw sensor-export CSV and uses only its time and angle columns. It preserves the source file, selects local extrema of absolute angle after 5 s with amplitude above 0.05 rad, groups adjacent same-sign candidates, and fits the logarithm of the selected peak amplitudes against time. Under an exponential-envelope approximation, the negative fitted slope estimates the amplitude-decay rate.
@@ -40,6 +48,6 @@ The fit is cross-checked in tests against independent scalar closed-form ordinar
 
 ## Validation strategy
 
-Tests cover exact and noisy linear data, weighted-fit diagnostics, fit invariance properties, undefined R², uncertainty propagation, CSV edge cases, machine-readable CLI output, synthetic and real-data pendulum case studies, and independent closed-form cross-checks. CI runs on Python 3.10–3.13 and also validates the built wheel and source distribution.
+Tests cover exact and noisy linear data, weighted-fit diagnostics, fit invariance properties, undefined R², uncertainty propagation, CSV edge cases, machine-readable CLI output, synthetic and real-data pendulum case studies, nonlinear-fit reference checks, and independent closed-form cross-checks. CI runs on Python 3.10–3.13 and also validates the built wheel and source distribution.
 
 These checks are a starting point, not broad scientific validation. Before research use, compare results with hand calculations or an independent implementation and include uncertainties not covered by this software.

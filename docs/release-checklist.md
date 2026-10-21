@@ -9,11 +9,12 @@ This checklist is intended to keep PhysLab QA releases reproducible and scientif
 3. Run the installed-wheel smoke test, not only editable-install tests.
 4. Run `ruff check --select F src tests examples` to catch undefined names and related correctness errors.
 5. Run `python -m build` and `python -m twine check dist/*`.
-6. Re-run the synthetic pendulum example and inspect the generated Markdown report.
+6. Re-run the synthetic pendulum, nonlinear exponential-decay, and real-data examples; inspect their generated Markdown reports.
 7. Review `docs/numerical-design.md` for any changed assumptions, formulas, or limitations.
 8. Update `CHANGELOG.md` with user-visible changes and known limitations.
 9. Verify that README installation commands work from a clean environment.
-10. Do not claim validation against real experiments unless the underlying dataset, provenance, and comparison have actually been reviewed.
+10. Verify the optional nonlinear extra and CLI model registry against the documented API.
+11. Do not claim validation against real experiments unless the underlying dataset, provenance, and comparison have actually been reviewed.
 
 ## Release notes should state
 

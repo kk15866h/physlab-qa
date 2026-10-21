@@ -21,6 +21,18 @@ and converts the fitted slope to an estimate of gravitational acceleration. The 
 
 The uncertainty reported by this example uses only the regression slope's statistical standard error. It excludes timing resolution, length calibration, finite-amplitude effects, air drag, pivot friction, correlations, and other systematic contributions.
 
+## Nonlinear fitting demo — synthetic exponential decay
+
+This example requires the optional SciPy dependency (`python -m pip install -e ".[nonlinear]"`). Run it with:
+
+```bash
+python examples/analyze_exponential_decay.py
+```
+
+The script generates deterministic synthetic data from `y = A e^{-kt} + C` with known parameters `A=2.5`, `k=0.8`, and `C=0.3` plus a small deterministic perturbation. It fits the explicit exponential model from a supplied initial guess and writes a report containing parameter estimates, local covariance, residual diagnostics, and optimizer status. The data are synthetic and must not be represented as experimental evidence.
+
+The CLI exposes the named `exponential-decay` and `quadratic` models. For arbitrary models, use the Python `nonlinear_fit` API with a vectorized callable and explicit initial parameters; arbitrary code expressions are not evaluated by the CLI.
+
 ## Real experimental data — damped pendulum
 
 The case study uses `examples/data/raw_data/len1_cond1_1.csv`, a raw sensor-export file from the [Damped Pendulum Dataset](https://github.com/EnzeXu/Damped_Pendulum_Dataset). The upstream project describes its measurements as collected using a PASCO Wireless Rotary Motion Sensor (PS-3220). This run uses length setting `len1` (0.236 m), condition `cond1` (air only), repeat 1. The source CSV contains 6,896 time-angle observations; other sensor/export columns and their blank cells are preserved even though the analysis uses only time and angle.
