@@ -16,4 +16,14 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e ".[dev]"
-      - run: pytest
+      - name: Run unit tests
+        run: pytest
+      - name: Build source distribution and wheel
+        run: python -m build
+      - name: Install built wheel and smoke-test CLI
+        run: |
+          python -m pip install --force-reinstall --no-deps dist/*.whl
+          physlab-qa --version
+          physlab-qa validate examples/pendulum.csv --numeric-cols length_m,period_squared_s2
+          physlab-qa fit examples/pendulum.csv --x length_m --y period_squared_s2 --output build/ci-report.md
+          test -s build/ci-report.md
