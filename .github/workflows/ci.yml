@@ -16,16 +16,22 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e ".[dev]"
+      - name: Static correctness checks
+        run: ruff check --select F src tests examples
       - name: Run unit tests
         run: pytest
       - name: Build source distribution and wheel
         run: python -m build
+      - name: Validate distribution metadata
+        run: python -m twine check dist/*
       - name: Install built wheel and smoke-test CLI
         run: |
           python -m pip install --force-reinstall --no-deps dist/*.whl
+          python -m pip check
           physlab-qa --version
           physlab-qa validate examples/pendulum.csv --numeric-cols length_m,period_squared_s2
-          physlab-qa fit examples/pendulum.csv --x length_m --y period_squared_s2 --output build/ci-report.md
+          physlab-qa fit examples/pendulum.csv --x length_m --y period_squared_s2 --output build/ci-report.md --json > build/fit.json
+          python -c 'import json; d=json.load(open("build/fit.json")); assert d["slope"] > 0; assert d["report_path"] == "build/ci-report.md"'
           test -s build/ci-report.md
           python examples/analyze_pendulum.py
           test -s build/pendulum-report.md
