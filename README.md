@@ -14,15 +14,17 @@ PhysLab QA is an early-stage Python toolkit for validating experimental tables, 
 - Markdown reports and optional residual plots.
 - Python API, command-line interface, unit tests, and GitHub Actions CI.
 
-## Installation
+## Installation from source
 
-Python 3.10 or newer is required.
+Python 3.10 or newer is required. This project has not yet been published to PyPI, so install directly from the repository:
 
 ```bash
-python -m pip install "physlab-qa[plot]"
+git clone https://github.com/kk15866h/physlab-qa.git
+cd physlab-qa
+python -m pip install -e ".[plot]"
 ```
 
-For development:
+For development and tests:
 
 ```bash
 python -m pip install -e ".[dev,plot]"
